@@ -225,25 +225,29 @@
 #define SRV_4_PWM_SetAnalogMode()      do { ANSELAbits.ANSA7 = 1; } while(0)
 #define SRV_4_PWM_SetDigitalMode()     do { ANSELAbits.ANSA7 = 0; } while(0)
 
-// get/set SRV_9_PWM aliases
-#define SRV_9_PWM_TRIS                 TRISBbits.TRISB0
-#define SRV_9_PWM_LAT                  LATBbits.LATB0
-#define SRV_9_PWM_PORT                 PORTBbits.RB0
-#define SRV_9_PWM_WPU                  WPUBbits.WPUB0
-#define SRV_9_PWM_OD                   ODCONBbits.ODCB0
-#define SRV_9_PWM_ANS                  ANSELBbits.ANSB0
-#define SRV_9_PWM_SetHigh()            do { LATBbits.LATB0 = 1; } while(0)
-#define SRV_9_PWM_SetLow()             do { LATBbits.LATB0 = 0; } while(0)
-#define SRV_9_PWM_Toggle()             do { LATBbits.LATB0 = ~LATBbits.LATB0; } while(0)
-#define SRV_9_PWM_GetValue()           PORTBbits.RB0
-#define SRV_9_PWM_SetDigitalInput()    do { TRISBbits.TRISB0 = 1; } while(0)
-#define SRV_9_PWM_SetDigitalOutput()   do { TRISBbits.TRISB0 = 0; } while(0)
-#define SRV_9_PWM_SetPullup()          do { WPUBbits.WPUB0 = 1; } while(0)
-#define SRV_9_PWM_ResetPullup()        do { WPUBbits.WPUB0 = 0; } while(0)
-#define SRV_9_PWM_SetPushPull()        do { ODCONBbits.ODCB0 = 0; } while(0)
-#define SRV_9_PWM_SetOpenDrain()       do { ODCONBbits.ODCB0 = 1; } while(0)
-#define SRV_9_PWM_SetAnalogMode()      do { ANSELBbits.ANSB0 = 1; } while(0)
-#define SRV_9_PWM_SetDigitalMode()     do { ANSELBbits.ANSB0 = 0; } while(0)
+// get/set RB0 procedures
+#define RB0_SetHigh()            do { LATBbits.LATB0 = 1; } while(0)
+#define RB0_SetLow()             do { LATBbits.LATB0 = 0; } while(0)
+#define RB0_Toggle()             do { LATBbits.LATB0 = ~LATBbits.LATB0; } while(0)
+#define RB0_GetValue()              PORTBbits.RB0
+#define RB0_SetDigitalInput()    do { TRISBbits.TRISB0 = 1; } while(0)
+#define RB0_SetDigitalOutput()   do { TRISBbits.TRISB0 = 0; } while(0)
+#define RB0_SetPullup()             do { WPUBbits.WPUB0 = 1; } while(0)
+#define RB0_ResetPullup()           do { WPUBbits.WPUB0 = 0; } while(0)
+#define RB0_SetAnalogMode()         do { ANSELBbits.ANSB0 = 1; } while(0)
+#define RB0_SetDigitalMode()        do { ANSELBbits.ANSB0 = 0; } while(0)
+
+// get/set RB1 procedures
+#define RB1_SetHigh()            do { LATBbits.LATB1 = 1; } while(0)
+#define RB1_SetLow()             do { LATBbits.LATB1 = 0; } while(0)
+#define RB1_Toggle()             do { LATBbits.LATB1 = ~LATBbits.LATB1; } while(0)
+#define RB1_GetValue()              PORTBbits.RB1
+#define RB1_SetDigitalInput()    do { TRISBbits.TRISB1 = 1; } while(0)
+#define RB1_SetDigitalOutput()   do { TRISBbits.TRISB1 = 0; } while(0)
+#define RB1_SetPullup()             do { WPUBbits.WPUB1 = 1; } while(0)
+#define RB1_ResetPullup()           do { WPUBbits.WPUB1 = 0; } while(0)
+#define RB1_SetAnalogMode()         do { ANSELBbits.ANSB1 = 1; } while(0)
+#define RB1_SetDigitalMode()        do { ANSELBbits.ANSB1 = 0; } while(0)
 
 // get/set SRV_5_PWM aliases
 #define SRV_5_PWM_TRIS                 TRISCbits.TRISC0
@@ -284,26 +288,6 @@
 #define SRV_6_PWM_SetOpenDrain()       do { ODCONCbits.ODCC2 = 1; } while(0)
 #define SRV_6_PWM_SetAnalogMode()      do { ANSELCbits.ANSC2 = 1; } while(0)
 #define SRV_6_PWM_SetDigitalMode()     do { ANSELCbits.ANSC2 = 0; } while(0)
-
-// get/set SRV_10_PWM aliases
-#define SRV_10_PWM_TRIS                 TRISCbits.TRISC3
-#define SRV_10_PWM_LAT                  LATCbits.LATC3
-#define SRV_10_PWM_PORT                 PORTCbits.RC3
-#define SRV_10_PWM_WPU                  WPUCbits.WPUC3
-#define SRV_10_PWM_OD                   ODCONCbits.ODCC3
-#define SRV_10_PWM_ANS                  ANSELCbits.ANSC3
-#define SRV_10_PWM_SetHigh()            do { LATCbits.LATC3 = 1; } while(0)
-#define SRV_10_PWM_SetLow()             do { LATCbits.LATC3 = 0; } while(0)
-#define SRV_10_PWM_Toggle()             do { LATCbits.LATC3 = ~LATCbits.LATC3; } while(0)
-#define SRV_10_PWM_GetValue()           PORTCbits.RC3
-#define SRV_10_PWM_SetDigitalInput()    do { TRISCbits.TRISC3 = 1; } while(0)
-#define SRV_10_PWM_SetDigitalOutput()   do { TRISCbits.TRISC3 = 0; } while(0)
-#define SRV_10_PWM_SetPullup()          do { WPUCbits.WPUC3 = 1; } while(0)
-#define SRV_10_PWM_ResetPullup()        do { WPUCbits.WPUC3 = 0; } while(0)
-#define SRV_10_PWM_SetPushPull()        do { ODCONCbits.ODCC3 = 0; } while(0)
-#define SRV_10_PWM_SetOpenDrain()       do { ODCONCbits.ODCC3 = 1; } while(0)
-#define SRV_10_PWM_SetAnalogMode()      do { ANSELCbits.ANSC3 = 1; } while(0)
-#define SRV_10_PWM_SetDigitalMode()     do { ANSELCbits.ANSC3 = 0; } while(0)
 
 // get/set IO_RC5 aliases
 #define IO_RC5_TRIS                 TRISCbits.TRISC5
