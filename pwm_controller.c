@@ -2,51 +2,45 @@
 #include "mcc_generated_files/pin_manager.h"
 #include "mcc_generated_files/tmr1.h"
 #include "mcc_generated_files/tmr0.h"
+#include "mcc_generated_files/mcc.h"
 
+void calibrate_servo(uint8_t idx){
+    
+    
+    for(uint8_t k = 0; k < 230; k++){
+        set_servo(idx,k);
+        servo_calibrations[idx][1] = (ADC_GetConversion(SRV_1_ADC) & 0x3FC) >> 2;
+         __delay_ms(100);
+    }
+    
+    for(uint8_t k = 0; k < 230; k++){
+        meanY += adcValues[k];
+    }
+    meanY /= 230;
+
+    servo_calibrations[idx][0] = 0.0;
+    
+    for(uint8_t k =0; k < 230; k++){
+        servo_calibrations[idx][0] += (k-meanX) * (adcValues[k]-meanY);
+    }
+    servo_calibrations[idx][0] /= CALIB_DIV;
+    servo_calibrations[idx][1] = meanY - servo_calibrations[idx][0]*meanX;
+    /*set_servo(0,0);*/
+    __delay_ms(1000);
+}
 
 void pwm_interrupt_handler(void){
 
-    //if(_pwm_counter >= _min_pos && _pwm_counter <= _max_pos){
-        //Turn off servo pins, when enough time elapsed
-       /* for(uint8_t k = 0; k < NUMBER_OF_SERVOS; k++){
-           // if(_pwm_counter < servo_pos[k]) break;
-            else if(_pwm_counter == servo_pos[k]) _set_servo_pin
-        }*/
-      
-       
-        
-        /*if(_pwm_counter == servo_pos[1]) _set_servo_pin(0x1,0);
-        if(_pwm_counter == servo_pos[2]) _set_servo_pin(0x1,0);
-        if(_pwm_counter == servo_pos[3]) _set_servo_pin(0x1,0);
-        if(_pwm_counter == servo_pos[4]) _set_servo_pin(0x1,0);
-        if(_pwm_counter == servo_pos[5]) _set_servo_pin(0x1,0);
-        if(_pwm_counter == servo_pos[6]) _set_servo_pin(0x1,0);
-        if(_pwm_counter == servo_pos[7]) _set_servo_pin(0x1,0);
-        if(_pwm_counter == servo_pos[8]) _set_servo_pin(0x1,0);
-        if(_pwm_counter == servo_pos[9]) _set_servo_pin(0x1,0);
-        if(_pwm_counter == servo_pos[10]) _set_servo_pin(0x1,0);
-        if(_pwm_counter == servo_pos[11]) _set_servo_pin(0x1,0);
-        if(_pwm_counter == servo_pos[12]) _set_servo_pin(0x1,0);*/
-    //}
     uint16_t currentState = servo_delays[_pwm_counter];
-    if(currentState)  _set_servo_pin(currentState,0);
+    if(currentState)  _set_servo_pin(currentState,0); //set servo pin to zero if enough time elapsed
     
     if(_pwm_counter == PWM_RESOLUTION){
          
         set_all_servo(0);
-        //set_all_servo(0);
-        //Stop timer0
-        //TMR2_StopTimer();
-        
-        //TMR1_WriteTimer(0x7ACC); //17050 us
-        //TMR1_StopTimer();
-
         TMR0_StopTimer();
         
         TMR1_WriteTimer(0x7ACC); // 400 us
         TMR1_StartTimer();
-        //SRV_2_PWM_SetLow();
-        //set_all_servo(0);
     }
     else _pwm_counter++;
 }
@@ -67,15 +61,10 @@ void delay_interrupt_handler(void){
 }
 
 void set_all_servo(uint8_t state){
-    //for(uint8_t k = 0; k < NUMBER_OF_SERVOS; k++)
     _set_servo_pin(0xffff,state);
-    //SRV_2_PWM_LAT = state;
 }
 
 void set_servo(uint8_t idx, uint8_t pos){
-  /*  if(pos < _min_pos) _min_pos = pos;
-    if(pos > _max_pos) _max_pos = pos;
-*/
     servo_pos[idx] = pos;
     
     for(uint8_t k = 0; k < 255;k++){
@@ -115,18 +104,6 @@ void _set_servo_pin(uint16_t idx, uint8_t state){
     if(idx & 0x200)  SRV_10_PWM_LAT = state;
     if(idx & 0x400) SRV_11_PWM_LAT = state;
     if(idx & 0x800) SRV_12_PWM_LAT = state;
-    /*SRV_1_PWM_LAT = idx & state;
-    SRV_2_PWM_LAT = idx>>1 & state;
-    SRV_3_PWM_LAT = idx>>2 & state;
-    SRV_4_PWM_LAT = idx>>3 & state;
-    SRV_5_PWM_LAT = idx>>4 & state;
-    SRV_6_PWM_LAT = idx>>5 & state;
-    SRV_7_PWM_LAT = idx>>6 & state;
-    SRV_8_PWM_LAT = idx>>7 & state;
-    SRV_9_PWM_LAT = idx>>8 & state;
-    SRV_10_PWM_LAT = idx>>9 & state;
-    SRV_11_PWM_LAT = idx>>10 & state;
-    SRV_12_PWM_LAT = idx>>11 & state;*/
 }
 
 void pwm_init(){
@@ -134,6 +111,4 @@ void pwm_init(){
     TMR1_SetInterruptHandler(delay_interrupt_handler);
     
     TMR1_StartTimer();
-    
-    
 }

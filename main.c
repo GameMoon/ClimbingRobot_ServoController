@@ -50,7 +50,7 @@
                          Main application
  */
 
-uint8_t adcValues[255] = {0};
+
 
 void main(void)
 {
@@ -86,13 +86,14 @@ void main(void)
     
     pwm_init();
 
-    uint8_t adcTest = 0;
-    set_servo(0,140);
-    __delay_ms(200);
+    
+    set_servo(0,0);
+    __delay_ms(1000);
+    calibrate_servo(0);
     
     while (1)
     {   
-   
+        
         
         // Add your application code
         //SRV_1_PWM_Toggle();
@@ -110,17 +111,9 @@ void main(void)
         *testPointer = 0x00;*/;
       
         
-        for(uint8_t k = 0; k < 230; k++){
-            set_servo(0,k);
-           
-            uint16_t avgADC = 0;
-            /*for(uint8_t l = 0; l<3;l++)
-                avgADC += (ADC_GetConversion(SRV_1_ADC) & 0x3FC) >> 2;*/
-            adcValues[k] = (ADC_GetConversion(SRV_1_ADC) & 0x3FC) >> 2;
-             __delay_ms(100);
-        }
-        set_servo(0,0);
-        __delay_ms(1000);
+        
+     /*   set_servo(0,0);
+        __delay_ms(1000);*/
         /*set_servo(0,200);
         set_servo(1,200);
         __delay_ms(1000);
