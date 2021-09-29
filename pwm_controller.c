@@ -36,7 +36,7 @@ void pwm_interrupt_handler(void){
     
     if(_pwm_counter == PWM_RESOLUTION){
          
-        set_all_servo(0);
+        set_all_servo_pins(0);
         TMR0_StopTimer();
         
         TMR1_WriteTimer(0x7ACC); // 400 us
@@ -55,17 +55,17 @@ void delay_interrupt_handler(void){
     else if(_pwm_counter == PWM_RESOLUTION){
         _pwm_counter = 0;
         TMR1_Reload();
-        set_all_servo(1);
+        set_all_servo_pins(1);
     }
      
 }
 
-void set_all_servo(uint8_t state){
+void set_all_servo_pins(uint8_t state){
     _set_servo_pin(0xffff,state);
 }
 
 void set_servo(uint8_t idx, uint8_t pos){
-    servo_pos[idx] = pos;
+    servo_timings[idx] = pos;
     
     for(uint8_t k = 0; k < 255;k++){
         servo_delays[k] &= (0<<idx);

@@ -43,29 +43,23 @@
 
 #include "mcc_generated_files/mcc.h"
 #include "pwm_controller.h"
-
+#include "adc_controller.h"
+#include "mcc_generated_files/i2c2_slave.h"
 #include <xc.h>
 
 /*
                          Main application
  */
 
-
+void sender_it(){
+    I2C2_Write(0x13);
+}
 
 void main(void)
 {
     
     // initialize the device
     SYSTEM_Initialize();
-    
-    
-
-    int pOffset = 25;
-    /*for(uint8_t k = 0; k < NUMBER_OF_SERVOS; k++){
-        set_servo(k,pOffset);
-        pOffset += 10;
-    }*/
-
     
   
     // When using interrupts, you need to set the Global and Peripheral Interrupt Enable bits
@@ -86,15 +80,19 @@ void main(void)
     
     pwm_init();
 
+    //Set all servo to middle position
+    for(uint8_t k = 0; k < NUMBER_OF_SERVOS; k++){
+        set_servo(k,PWM_RESOLUTION/2);
+    }
+
+    I2C2_Open();
+    I2C2_SlaveSetWriteIntHandler(sender_it);
     
-    set_servo(0,0);
-    __delay_ms(1000);
-    calibrate_servo(0);
     
     while (1)
     {   
         
-        
+        read_positions();
         // Add your application code
         //SRV_1_PWM_Toggle();
         /*if(testpos > 26) dir = 1;

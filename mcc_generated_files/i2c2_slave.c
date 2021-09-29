@@ -62,7 +62,7 @@ typedef enum
 /**
  Section: Global Variables
  */
-volatile uint8_t i2c2WrData;
+volatile uint8_t i2c2WrData = 0x69;
 volatile uint8_t i2c2RdData;
 volatile uint8_t i2c2SlaveAddr;
 static volatile i2c2_slave_state_t i2c2SlaveState = I2C2_IDLE;

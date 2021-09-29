@@ -68,8 +68,8 @@ void PIN_MANAGER_Initialize(void)
     */
     TRISE = 0x0C;
     TRISA = 0x6A;
-    TRISB = 0xFF;
-    TRISC = 0x9A;
+    TRISB = 0xFE;
+    TRISC = 0x92;
     TRISD = 0xA5;
 
     /**
@@ -77,7 +77,7 @@ void PIN_MANAGER_Initialize(void)
     */
     ANSELD = 0xFF;
     ANSELC = 0xFF;
-    ANSELB = 0xFC;
+    ANSELB = 0xF9;
     ANSELE = 0x07;
     ANSELA = 0xFF;
 
@@ -124,9 +124,9 @@ void PIN_MANAGER_Initialize(void)
    
     
 	
-    SSP2DATPPS = 0x08;   //RB0->MSSP2:SDA2;    
+    SSP2DATPPS = 0x0A;   //RB2->MSSP2:SDA2;    
     RB1PPS = 0x17;   //RB1->MSSP2:SCL2;    
-    RB0PPS = 0x18;   //RB0->MSSP2:SDA2;    
+    RB2PPS = 0x18;   //RB2->MSSP2:SDA2;    
     SSP2CLKPPS = 0x09;   //RB1->MSSP2:SCL2;    
 }
   
