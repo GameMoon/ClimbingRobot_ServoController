@@ -68,7 +68,7 @@ void set_servo(uint8_t idx, uint8_t pos){
     servo_timings[idx] = pos;
     
     for(uint8_t k = 0; k < 255;k++){
-        servo_delays[k] &= (0<<idx);
+        servo_delays[k] &= ~(1<<idx);
     }
      servo_delays[pos] |= (1<<idx);
 }
