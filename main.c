@@ -51,8 +51,36 @@
                          Main application
  */
 
+
+
+uint8_t rec_data;
+uint8_t rec_address;
+bool isReadMode = false;
+
+uint8_t counter = 0;
+uint8_t selector = 0;
 void sender_it(){
-    I2C2_Write(0x13);
+    
+    if(counter < NUMBER_OF_SERVOS){
+        I2C2_Write(servo_positions[counter]);
+        if(counter == NUMBER_OF_SERVOS) I2C2_SendAck();
+    }
+    else I2C2_Write(0);
+    counter++;
+    
+}
+void address_it(){
+    rec_address = I2C2_Read();
+    counter=0;
+    selector = 0;
+}
+void receiver_it(){
+    rec_data = I2C2_Read();
+    if(selector == 0) selector = rec_data;
+    else if(selector < 12){
+        set_servo(selector,rec_data);
+        I2C2_SendAck();
+    }
 }
 
 void main(void)
@@ -87,7 +115,8 @@ void main(void)
 
     I2C2_Open();
     I2C2_SlaveSetWriteIntHandler(sender_it);
-    
+    I2C2_SlaveSetReadIntHandler(receiver_it);
+    I2C2_SlaveSetAddrIntHandler(address_it);
     
     while (1)
     {   
