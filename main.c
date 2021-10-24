@@ -161,7 +161,6 @@ void main(void)
     for(uint8_t k = 0; k < NUMBER_OF_SERVOS; k++){
         set_servo(k,PWM_RESOLUTION/2);
     }
-    set_servo(1,PWM_RESOLUTION);
     
     //Setup I2C
     I2C2_Open();
