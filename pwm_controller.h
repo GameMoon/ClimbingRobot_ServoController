@@ -14,7 +14,7 @@
 
 
 //max 2300 us
-#define PWM_RESOLUTION 153//115//230
+#define PWM_RESOLUTION 115//115//230
 
 
 uint8_t _pwm_counter = 0;

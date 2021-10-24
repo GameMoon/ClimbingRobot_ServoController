@@ -73,8 +73,8 @@ void TMR0_Initialize(void)
     // TMR0H 255; 
     TMR0H = 0xFF;
 
-    // TMR0L 226; 
-    TMR0L = 0xE2;
+    // TMR0L 216; 
+    TMR0L = 0xD8;
 
     // Load TMR0 value to the 16-bit reload variable
     timer0ReloadVal16bit = (TMR0H << 8) | TMR0L;

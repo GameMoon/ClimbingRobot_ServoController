@@ -37,7 +37,7 @@ void pwm_interrupt_handler(void){
         
         //FFEC - 10 us
         //75B8 - 17770 us
-        TMR0_WriteTimer(0x752C);
+        TMR0_WriteTimer(0x75A4);
         _pwm_counter = 0;
        
         //TMR1_WriteTimer(0x7ACC); // 400 us
