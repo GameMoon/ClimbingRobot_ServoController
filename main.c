@@ -58,30 +58,78 @@ uint8_t rec_address;
 bool isReadMode = false;
 
 uint8_t counter = 0;
-uint8_t selector = 0;
+uint8_t selector = 0xFF;
+uint8_t has_reg_addr = 0;
+
+uint8_t process_pos = 0;
+uint8_t result[16] = {0};
+
+uint8_t coil_status = 0;
+uint8_t old_coil_status = 0;
+
+//Handling I2C interrupts
+void set_coils(uint8_t data){
+    SOL_1_LAT = data;
+    SOL_2_LAT = (data >> 1);
+    SOL_3_LAT = (data >> 2);
+    SOL_4_LAT = (data >> 3);
+}
+
+void address_it(){
+    I2C2_Read();
+    I2C2_SendAck();
+   
+    
+    counter=0;
+    selector = 0xFF;
+    rec_address = 0;
+}
+
+//Sending data to master
 void sender_it(){
     
-    if(counter < NUMBER_OF_SERVOS){
-        I2C2_Write(servo_positions[counter]);
-        if(counter == NUMBER_OF_SERVOS) I2C2_SendAck();
+   /* if(rec_address == 0x01){
+        if(counter < NUMBER_OF_SERVOS){
+            I2C2_Write(servo_positions[counter]);
+        }
+        else I2C2_Write(0);
+        counter++;
     }
-    else I2C2_Write(0);
-    counter++;
+    else I2C2_Write(0);*/
     
 }
-void address_it(){
-    rec_address = I2C2_Read();
-    counter=0;
-    selector = 0;
-}
+
+//Incoming data from master
 void receiver_it(){
+    
     rec_data = I2C2_Read();
-    if(selector == 0) selector = rec_data;
-    else if(selector < 12){
-        set_servo(selector,rec_data);
-        I2C2_SendAck();
+        
+    if(rec_address == 0){
+        rec_address = rec_data;
     }
+    else if(rec_address == 0x02 && process_pos == 0){ //Set all servos
+       
+        result[counter] = rec_data;
+        if(counter == 11) process_pos = 1;
+     
+        counter++;
+    }
+    else if(rec_address == 0x03){ //Set individual servo
+        if(selector == 0xFF) selector = rec_data;
+        else if(selector < 12){
+            set_servo(selector,rec_data);
+            
+        }
+    }
+    else if(rec_address == 0x04){  //Set coils
+        coil_status = rec_data;
+    }
+    
+    I2C2_SendAck(); // not sure if it's required
 }
+
+
+
 
 void main(void)
 {
@@ -120,34 +168,18 @@ void main(void)
     
     while (1)
     {   
-        
+        if(process_pos == 1){
+            set_all_servos(result);
+            process_pos = 0;
+        }
+        if(coil_status != old_coil_status){
+           
+            set_coils(coil_status);
+            old_coil_status = coil_status;
+           
+        }
+        //try without it
         read_positions();
-        // Add your application code
-        //SRV_1_PWM_Toggle();
-        /*if(testpos > 26) dir = 1;
-        else if(testpos < 12) dir = 0;
-        
-        if(dir) testpos--;
-        else testpos++;
-        */
-        //set_servo(0,testpos);
-        //set_servo(1,testpos);
-        //servo_pins[1] = ~servo_pins[1];
-       /* *testPointer = 0x04;
-        __delay_ms(10);
-        *testPointer = 0x00;*/;
-      
-        
-        
-     /*   set_servo(0,0);
-        __delay_ms(1000);*/
-        /*set_servo(0,200);
-        set_servo(1,200);
-        __delay_ms(1000);
-        set_servo(0,10);
-        set_servo(1,10);
-        __delay_ms(1000);*/
-       
     }
 }
 

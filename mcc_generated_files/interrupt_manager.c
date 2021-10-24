@@ -58,11 +58,11 @@ void __interrupt() INTERRUPT_InterruptManager (void)
     }
     else if(INTCONbits.PEIE == 1)
     {
-        if(PIE3bits.BCL2IE == 1 && PIR3bits.BCL2IF == 1)
+        if(PIE3bits.SSP2IE == 1 && PIR3bits.SSP2IF == 1)
         {
             MSSP2_InterruptHandler();
         } 
-        else if(PIE3bits.SSP2IE == 1 && PIR3bits.SSP2IF == 1)
+        else if(PIE3bits.BCL2IE == 1 && PIR3bits.BCL2IF == 1)
         {
             MSSP2_InterruptHandler();
         } 
