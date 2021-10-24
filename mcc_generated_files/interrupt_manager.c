@@ -56,29 +56,17 @@ void __interrupt() INTERRUPT_InterruptManager (void)
     {
         TMR0_ISR();
     }
-    else if(INTCONbits.PEIE == 1)
+    if(INTCONbits.PEIE == 1)
     {
         if(PIE3bits.SSP2IE == 1 && PIR3bits.SSP2IF == 1)
         {
             MSSP2_InterruptHandler();
         } 
-        else if(PIE3bits.BCL2IE == 1 && PIR3bits.BCL2IF == 1)
+        if(PIE3bits.BCL2IE == 1 && PIR3bits.BCL2IF == 1)
         {
             MSSP2_InterruptHandler();
         } 
-        else if(PIE4bits.TMR1IE == 1 && PIR4bits.TMR1IF == 1)
-        {
-            TMR1_ISR();
-        } 
-        else
-        {
-            //Unhandled Interrupt
-        }
     }      
-    else
-    {
-        //Unhandled Interrupt
-    }
 }
 /**
  End of File

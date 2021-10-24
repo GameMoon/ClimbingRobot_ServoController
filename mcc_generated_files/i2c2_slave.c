@@ -62,7 +62,7 @@ typedef enum
 /**
  Section: Global Variables
  */
-volatile uint8_t i2c2WrData = 0x69;
+volatile uint8_t i2c2WrData;
 volatile uint8_t i2c2RdData;
 volatile uint8_t i2c2SlaveAddr;
 static volatile i2c2_slave_state_t i2c2SlaveState = I2C2_IDLE;
@@ -107,9 +107,9 @@ static inline bool I2C2_SlaveIsOverFlow(void);
 
 void I2C2_Initialize()
 {
-    SSP2STAT  = 0x00;
+    SSP2STAT  = 0x80;
     SSP2CON1 |= 0x06;
-    SSP2CON2  = 0x00;
+    SSP2CON2  = 0x01;
     SSP2CON1bits.SSPEN = 0;
 }
 
@@ -311,9 +311,9 @@ static inline bool I2C2_SlaveOpen()
 {
     if(!SSP2CON1bits.SSPEN)
     {      
-        SSP2STAT  = 0x00;
+        SSP2STAT  = 0x80;
         SSP2CON1 |= 0x06;
-        SSP2CON2  = 0x00;
+        SSP2CON2  = 0x01;
         SSP2CON1bits.SSPEN = 1;
         return true;
     }
@@ -322,9 +322,9 @@ static inline bool I2C2_SlaveOpen()
 
 static inline void I2C2_SlaveClose()
 {
-    SSP2STAT  = 0x00;
+    SSP2STAT  = 0x80;
     SSP2CON1 |= 0x06;
-    SSP2CON2  = 0x00;
+    SSP2CON2  = 0x01;
     SSP2CON1bits.SSPEN = 0;
 }
 

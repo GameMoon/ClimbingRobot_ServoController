@@ -3,6 +3,8 @@
 
 #include "mcc_generated_files/device_config.h"
 #include "mcc_generated_files/adc.h"
+
+
 void read_positions(){
     
     // Turn on the ADC module
@@ -23,7 +25,6 @@ void read_positions(){
         }
 
         // Conversion finished, return the result*/
-     
         servo_positions[k] = (ADRESH << 6) + (ADRESL >> 2);
     }
     

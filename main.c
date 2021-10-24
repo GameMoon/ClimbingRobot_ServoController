@@ -44,6 +44,7 @@
 #include "mcc_generated_files/mcc.h"
 #include "pwm_controller.h"
 #include "adc_controller.h"
+//#include "i2c_handler.h"
 #include "mcc_generated_files/i2c2_slave.h"
 #include <xc.h>
 
@@ -67,6 +68,9 @@ uint8_t result[16] = {0};
 uint8_t coil_status = 0;
 uint8_t old_coil_status = 0;
 
+uint8_t new_data = 0;
+
+
 //Handling I2C interrupts
 void set_coils(uint8_t data){
     SOL_1_LAT = data;
@@ -76,60 +80,57 @@ void set_coils(uint8_t data){
 }
 
 void address_it(){
-    I2C2_Read();
-    I2C2_SendAck();
-   
+    //Detect overflow
+    if(SSP2CON1bits.SSPOV) SSP2CON1bits.SSPOV = 0;
+    
+   // SSP2BUF = 0; //clear buffer
+    new_data = I2C2_Read();
+    
+    if(!SSP2STATbits.R_nW)
+        rec_address = 0;
     
     counter=0;
     selector = 0xFF;
-    rec_address = 0;
+    
 }
 
 //Sending data to master
 void sender_it(){
-    
-   /* if(rec_address == 0x01){
+   
+    if(rec_address == 0x01){
         if(counter < NUMBER_OF_SERVOS){
             I2C2_Write(servo_positions[counter]);
         }
         else I2C2_Write(0);
         counter++;
     }
-    else I2C2_Write(0);*/
-    
+    else I2C2_Write(0);
 }
 
 //Incoming data from master
 void receiver_it(){
-    
     rec_data = I2C2_Read();
-        
+   
     if(rec_address == 0){
         rec_address = rec_data;
     }
     else if(rec_address == 0x02 && process_pos == 0){ //Set all servos
-       
-        result[counter] = rec_data;
-        if(counter == 11) process_pos = 1;
-     
-        counter++;
+
+        if(counter < 12) result[counter] = rec_data;
+
+        if(counter == 11) set_all_servos(result);
+        else counter++;
     }
     else if(rec_address == 0x03){ //Set individual servo
         if(selector == 0xFF) selector = rec_data;
         else if(selector < 12){
             set_servo(selector,rec_data);
-            
         }
     }
     else if(rec_address == 0x04){  //Set coils
-        coil_status = rec_data;
+        set_coils(rec_data);
     }
-    
-    I2C2_SendAck(); // not sure if it's required
 }
-
-
-
 
 void main(void)
 {
@@ -160,25 +161,17 @@ void main(void)
     for(uint8_t k = 0; k < NUMBER_OF_SERVOS; k++){
         set_servo(k,PWM_RESOLUTION/2);
     }
-
+    set_servo(1,PWM_RESOLUTION);
+    
+    //Setup I2C
     I2C2_Open();
     I2C2_SlaveSetWriteIntHandler(sender_it);
     I2C2_SlaveSetReadIntHandler(receiver_it);
     I2C2_SlaveSetAddrIntHandler(address_it);
+
     
     while (1)
     {   
-        if(process_pos == 1){
-            set_all_servos(result);
-            process_pos = 0;
-        }
-        if(coil_status != old_coil_status){
-           
-            set_coils(coil_status);
-            old_coil_status = coil_status;
-           
-        }
-        //try without it
         read_positions();
     }
 }
