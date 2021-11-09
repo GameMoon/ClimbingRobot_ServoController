@@ -5,11 +5,12 @@
 #include "mcc_generated_files/adc.h"
 
 
+void adc_init(){
+    ADCON0bits.ADON = 1; //turn on adc module
+    ADCON1bits.ADFM = 0; //output format shift up
+}
+
 void read_positions(){
-    
-    // Turn on the ADC module
-     ADCON0bits.ADON = 1;
-    
     for(uint8_t k = 0; k < NUMBER_OF_SERVOS; k++){
         ADCON0bits.CHS = servo_adc_channels[k];    
        
@@ -23,9 +24,7 @@ void read_positions(){
         while (ADCON0bits.GO)
         {
         }
-
-        // Conversion finished, return the result*/
-        servo_positions[k] = (ADRESH << 6) + (ADRESL >> 2);
-    }
-    
+       
+        servo_positions[k] = ADRESH;
+    }   
 }

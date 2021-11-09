@@ -34,6 +34,7 @@ uint8_t servo_adc_channels[] ={
   
 uint8_t servo_positions[NUMBER_OF_SERVOS] = {0};
 
+void adc_init();
 void read_positions();
 
 

@@ -16,10 +16,12 @@
 //max 2300 us
 #define PWM_RESOLUTION 115//115//230
 
-
+uint8_t coil_state = 0;
 uint8_t _pwm_counter = 0;
 
 uint8_t servo_timings[NUMBER_OF_SERVOS] = {0};
+uint16_t servo_delays[PWM_RESOLUTION] = {0};
+
 
 void pwm_init();
 void pwm_interrupt_handler(void);
@@ -27,6 +29,8 @@ void set_servo(uint8_t idx, uint8_t pos);
 void set_all_servos(uint8_t * pos);
 
 void set_all_servo_pins(uint8_t state);
+
+void _set_servo_pin(uint16_t idx, uint8_t state);
 
 #endif	/* PWM_CONTROLLER_H */
 

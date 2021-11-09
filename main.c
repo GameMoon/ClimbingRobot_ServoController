@@ -99,17 +99,17 @@ void sender_it(){
    
     if(rec_address == 0x01){
         if(counter < NUMBER_OF_SERVOS){
-            I2C2_Write(servo_positions[counter]);
+            SSP2BUF = servo_positions[counter];
         }
-        else I2C2_Write(0);
+        else SSP2BUF = 0;
         counter++;
     }
-    else I2C2_Write(0);
+    else SSP2BUF = 0;
 }
 
 //Incoming data from master
 void receiver_it(){
-    rec_data = I2C2_Read();
+    rec_data = SSP2BUF;
    
     if(rec_address == 0){
         rec_address = rec_data;
@@ -118,7 +118,7 @@ void receiver_it(){
 
         if(counter < 12) result[counter] = rec_data;
 
-        if(counter == 11) set_all_servos(result);
+        if(counter == 11) process_pos = 1;
         else counter++;
     }
     else if(rec_address == 0x03){ //Set individual servo
@@ -161,17 +161,24 @@ void main(void)
     for(uint8_t k = 0; k < NUMBER_OF_SERVOS; k++){
         set_servo(k,PWM_RESOLUTION/2);
     }
+    //set_servo(0,2);
     
     //Setup I2C
     I2C2_Open();
     I2C2_SlaveSetWriteIntHandler(sender_it);
     I2C2_SlaveSetReadIntHandler(receiver_it);
     I2C2_SlaveSetAddrIntHandler(address_it);
-
+    
+    //init adc
+    adc_init();
     
     while (1)
-    {   
-        read_positions();
+    {  
+       read_positions();
+       if(process_pos == 1){
+           set_all_servos(result);
+           process_pos = 0;
+       }
     }
 }
 

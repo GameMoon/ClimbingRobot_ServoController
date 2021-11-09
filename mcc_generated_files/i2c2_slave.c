@@ -107,7 +107,7 @@ static inline bool I2C2_SlaveIsOverFlow(void);
 
 void I2C2_Initialize()
 {
-    SSP2STAT  = 0x80;
+    SSP2STAT  = 0x00;
     SSP2CON1 |= 0x06;
     SSP2CON2  = 0x01;
     SSP2CON1bits.SSPEN = 0;
@@ -311,7 +311,7 @@ static inline bool I2C2_SlaveOpen()
 {
     if(!SSP2CON1bits.SSPEN)
     {      
-        SSP2STAT  = 0x80;
+        SSP2STAT  = 0x00;
         SSP2CON1 |= 0x06;
         SSP2CON2  = 0x01;
         SSP2CON1bits.SSPEN = 1;
@@ -322,7 +322,7 @@ static inline bool I2C2_SlaveOpen()
 
 static inline void I2C2_SlaveClose()
 {
-    SSP2STAT  = 0x80;
+    SSP2STAT  = 0x00;
     SSP2CON1 |= 0x06;
     SSP2CON2  = 0x01;
     SSP2CON1bits.SSPEN = 0;
