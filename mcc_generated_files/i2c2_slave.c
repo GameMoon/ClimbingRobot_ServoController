@@ -44,6 +44,7 @@
     SOFTWARE.
 */
 
+#include "../robot_params.h"
 #include "i2c2_slave.h"
 #include <xc.h>
 
@@ -192,25 +193,30 @@ static void I2C2_Isr()
     switch(i2c2SlaveState)
     {
         case I2C2_ADDR_TX:
-            I2C2_SlaveAddrCallBack();
+            //I2C2_SlaveAddrCallBack();
+            address_it();
             if(I2C2_SlaveIsTxBufEmpty())
             {
-                I2C2_SlaveWrCallBack();
+                //I2C2_SlaveWrCallBack();
+                sender_it();
             }
             break;
         case I2C2_ADDR_RX:
-            I2C2_SlaveAddrCallBack();
+            //I2C2_SlaveAddrCallBack();
+            address_it();
             break;
         case I2C2_DATA_TX:
             if(I2C2_SlaveIsTxBufEmpty())
             {
-                I2C2_SlaveWrCallBack();
+                //I2C2_SlaveWrCallBack();
+                sender_it();
             }
             break;
         case I2C2_DATA_RX:
             if(I2C2_SlaveIsRxBufFull())
             {
-                I2C2_SlaveRdCallBack();
+                //I2C2_SlaveRdCallBack();
+                receiver_it();
             }
             break;
         default:

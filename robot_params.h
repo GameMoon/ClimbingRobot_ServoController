@@ -14,8 +14,10 @@ extern "C" {
 
 
 #define NUMBER_OF_SERVOS 12
-    
-    
+
+void address_it();
+void sender_it();
+void receiver_it();
 
 #ifdef	__cplusplus
 }

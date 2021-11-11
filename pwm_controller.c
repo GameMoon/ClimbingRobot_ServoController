@@ -92,7 +92,23 @@ void set_servo(uint8_t idx, uint8_t pos){
     servo_timings[idx] = pos;
 }
 void set_all_servos(uint8_t * pos){
-    memcpy(servo_timings,pos,NUMBER_OF_SERVOS);
+    for(uint8_t i = 1; i < NUMBER_OF_SERVOS; i++)
+    servo_timings[i] = pos[i];
+    /*servo_timings[1] = pos[1];
+    servo_timings[2] = pos[2];
+
+    servo_timings[3] = pos[3];
+    servo_timings[4] = pos[4];
+    servo_timings[5] = pos[5];
+
+    servo_timings[6] = pos[6];
+    servo_timings[7] = pos[7];
+    servo_timings[8] = pos[8];
+    
+    servo_timings[9] = pos[9];
+    servo_timings[10] = pos[10];
+    servo_timings[11] = pos[11];*/
+    //memcpy(servo_timings,pos,NUMBER_OF_SERVOS);
 }
 
 void pwm_init(){

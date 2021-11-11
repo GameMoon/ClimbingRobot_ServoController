@@ -19,7 +19,7 @@
 uint8_t coil_state = 0;
 uint8_t _pwm_counter = 0;
 
-uint8_t servo_timings[NUMBER_OF_SERVOS] = {0};
+uint8_t *servo_timings;//[NUMBER_OF_SERVOS] = {0};
 uint16_t servo_delays[PWM_RESOLUTION] = {0};
 
 

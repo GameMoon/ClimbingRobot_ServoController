@@ -62,8 +62,11 @@ uint8_t counter = 0;
 uint8_t selector = 0xFF;
 uint8_t has_reg_addr = 0;
 
-uint8_t process_pos = 0;
-uint8_t result[16] = {0};
+uint8_t swap_buffer = 0;
+uint8_t servo_buffers[16][2];
+
+uint8_t servo_buffer_1[16] = {0};
+uint8_t servo_buffer_2[16] = {0};
 
 uint8_t coil_status = 0;
 uint8_t old_coil_status = 0;
@@ -84,7 +87,7 @@ void address_it(){
     if(SSP2CON1bits.SSPOV) SSP2CON1bits.SSPOV = 0;
     
    // SSP2BUF = 0; //clear buffer
-    new_data = I2C2_Read();
+    new_data = SSP2BUF;
     
     if(!SSP2STATbits.R_nW)
         rec_address = 0;
@@ -109,26 +112,33 @@ void sender_it(){
 
 //Incoming data from master
 void receiver_it(){
-    rec_data = SSP2BUF;
+    //rec_data = SSP2BUF;
    
     if(rec_address == 0){
-        rec_address = rec_data;
+        rec_address = SSP2BUF;
     }
-    else if(rec_address == 0x02 && process_pos == 0){ //Set all servos
-
-        if(counter < 12) result[counter] = rec_data;
-
-        if(counter == 11) process_pos = 1;
-        else counter++;
+    else if(rec_address == 0x02 ){ //Set all servos
+        
+       
+        //if(counter < 12){
+        if(swap_buffer) servo_buffer_2[counter] = SSP2BUF;
+        else servo_buffer_1[counter] = SSP2BUF;
+        //}
+        if(counter == 11){
+           if(swap_buffer) servo_timings = &servo_buffer_2;
+           else servo_timings = &servo_buffer_1;
+            swap_buffer = ~swap_buffer;
+        }
+        else asm("incf _counter,1");
     }
     else if(rec_address == 0x03){ //Set individual servo
-        if(selector == 0xFF) selector = rec_data;
+        if(selector == 0xFF) selector = SSP2BUF;
         else if(selector < 12){
-            set_servo(selector,rec_data);
+            set_servo(selector,SSP2BUF);
         }
     }
     else if(rec_address == 0x04){  //Set coils
-        set_coils(rec_data);
+        set_coils(SSP2BUF);
     }
 }
 
@@ -154,9 +164,14 @@ void main(void)
     // Disable the Peripheral Interrupts
     //INTERRUPT_PeripheralInterruptDisable();
     
-    
+   /* for(uint8_t k = 0; k< 2;k++){
+        for(uint8_t i = 0; i < NUMBER_OF_SERVOS; i++)
+            servo_buffers[k][i] = 0;
+    }
+    servo_timings = &servo_buffers[1];*/
+    servo_timings = &servo_buffer_2;
     pwm_init();
-
+    
     //Set all servo to middle position
     for(uint8_t k = 0; k < NUMBER_OF_SERVOS; k++){
         set_servo(k,PWM_RESOLUTION/2);
@@ -165,20 +180,20 @@ void main(void)
     
     //Setup I2C
     I2C2_Open();
-    I2C2_SlaveSetWriteIntHandler(sender_it);
+ /*   I2C2_SlaveSetWriteIntHandler(sender_it);
     I2C2_SlaveSetReadIntHandler(receiver_it);
     I2C2_SlaveSetAddrIntHandler(address_it);
-    
+    */
     //init adc
     adc_init();
     
     while (1)
     {  
        read_positions();
-       if(process_pos == 1){
+      /* if(process_pos == 1){
            set_all_servos(result);
            process_pos = 0;
-       }
+       }*/
     }
 }
 
